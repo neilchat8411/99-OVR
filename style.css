@@ -1,0 +1,552 @@
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial, Helvetica, sans-serif;
+}
+
+
+body{
+
+    background:#1D428A;
+
+    color:#dedede;
+
+    min-height:100vh;
+
+}
+
+
+header{
+
+    text-align:center;
+    padding:30px;
+
+}
+
+
+header h1{
+
+    font-size:48px;
+    letter-spacing:2px;
+
+}
+
+header h1{
+
+    color:#FFFFFF;
+    
+    text-shadow:
+    2px 2px 0 #C8102E;
+    
+    }
+
+header p{
+
+    margin-top:10px;
+    font-size:18px;
+    color:#cbd5e1;
+
+}
+
+
+
+#progress{
+
+    width:500px;
+
+    height:18px;
+
+    margin:25px auto;
+
+    background:#dedede;
+
+    border-radius:20px;
+
+    overflow:hidden;
+
+    border:2px solid #C8102E;
+
+}
+
+
+
+#progressFill{
+
+    height:100%;
+
+    width:0%;
+
+    background:#C8102E;
+
+    transition:.5s ease;
+
+}
+
+
+
+#progressFill{
+
+    background:#C8102E;
+    
+    }
+
+
+
+
+
+main{
+
+    display:grid;
+
+    grid-template-columns:
+    300px
+    1fr
+    330px;
+
+    gap:20px;
+
+    padding:20px;
+
+}
+
+
+
+.panel{
+
+    background:#dedede;
+
+    color:#1D428A;
+
+    border-radius:20px;
+
+    padding:25px;
+
+    min-height:600px;
+
+    box-shadow:
+    0 10px 30px rgba(0,0,0,.25);
+
+}
+
+
+
+.panel h2{
+
+    text-align:center;
+
+    margin-bottom:25px;
+
+}
+
+
+
+#teamLogo{
+
+    display:block;
+
+    margin:20px auto;
+
+    width:170px;
+
+    height:170px;
+
+    object-fit:contain;
+
+}
+
+
+
+#teamName{
+
+    text-align:center;
+
+    font-size:32px;
+
+    min-height:45px;
+
+}
+
+
+
+select{
+
+    width:100%;
+
+    margin-top:25px;
+
+    padding:12px;
+
+    border-radius:10px;
+
+    font-size:16px;
+
+}
+
+
+
+
+
+button{
+
+    width:100%;
+
+    margin-top:15px;
+
+    padding:15px;
+
+    border-radius:12px;
+
+    border:none;
+
+    background:#C8102E;
+
+    color:#dedede;
+
+    font-size:18px;
+
+    font-weight:bold;
+
+    cursor:pointer;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-align:center;
+
+    transition:.2s;
+
+}
+
+
+button:hover{
+
+    background:#a50d25;
+
+    transform:scale(1.03);
+
+}
+
+
+button:disabled{
+
+    background:#777;
+
+    cursor:not-allowed;
+
+}
+
+
+
+button:hover{
+
+    background:#3385ff;
+
+    transform:scale(1.03);
+
+}
+
+
+
+button:disabled{
+
+    background:#555;
+
+    cursor:not-allowed;
+
+}
+
+
+
+
+.attributeCard{
+
+    background:#1D428A;
+    
+    color:#dedede;
+    
+    border:2px solid #C8102E;
+    
+    }
+
+.attributeCard:hover{
+
+background:#C8102E;
+
+transform:translateY(-3px);
+
+}
+
+
+
+.attributeCard h3{
+
+    font-size:22px;
+
+}
+
+
+
+.attributeCard h4{
+
+    font-size:30px;
+
+    margin-top:5px;
+
+}
+
+
+
+.locked{
+
+    opacity:.35;
+
+    pointer-events:none;
+
+}
+
+
+
+
+
+.teamSlot{
+
+    background:#1D428A;
+    
+    color:#dedede;
+    
+    border-left:6px solid #C8102E;
+    
+    }
+
+
+
+.teamSlot img{
+
+    width:35px;
+
+    height:35px;
+
+}
+
+
+
+
+
+#overall{
+
+    color:#C8102E;
+    
+    }
+
+
+
+
+#resultScreen{
+
+    display:none;
+
+    position:fixed;
+
+    top:0;
+
+    left:0;
+
+    width:100%;
+
+    height:100%;
+
+    background:
+    rgba(0,0,0,.85);
+
+    align-items:center;
+
+    justify-content:center;
+
+}
+
+
+
+.resultCard{
+
+    background:#dedede;
+    
+    color:#1D428A;
+    
+    border-top:10px solid #C8102E;
+    
+    }
+
+
+
+.resultCard h1{
+
+    font-size:38px;
+
+    margin-bottom:25px;
+
+}
+
+
+
+.resultCard h2{
+
+    color:#C8102E;
+    
+    }
+
+
+
+.resultCard h3{
+
+    margin-top:15px;
+
+    font-size:24px;
+
+}
+
+
+
+
+
+@media(max-width:900px){
+
+
+main{
+
+    grid-template-columns:1fr;
+
+}
+
+
+#progress{
+
+    width:90%;
+
+}
+
+}
+
+.teamSlot{
+
+    display:flex;
+    align-items:center;
+    gap:12px;
+    
+    background:#203452;
+    
+    padding:12px;
+    
+    border-radius:12px;
+    
+    margin-bottom:12px;
+    
+    }
+    
+    
+    .teamSlot img{
+    
+    width:45px;
+    height:45px;
+    
+    }
+    
+    
+    .teamSlot strong{
+    
+    margin-left:auto;
+    
+    font-size:22px;
+    
+    color:#00d26a;
+    
+    }
+
+    .tier{
+
+        font-size:18px;
+        
+        padding:8px;
+        
+        border-radius:8px;
+        
+        background:#d92632;
+        
+        margin-bottom:10px;
+        
+        text-align:center;
+        
+        }
+
+
+        .attributeCard{
+
+            background:#1D428A;
+        
+            color:#dedede;
+        
+            border:2px solid #C8102E;
+        
+            border-radius:12px;
+        
+            margin-bottom:12px;
+        
+            padding:18px;
+        
+            cursor:pointer;
+        
+            display:flex;
+        
+            flex-direction:column;
+        
+            align-items:center;
+        
+            justify-content:center;
+        
+            text-align:center;
+        
+            transition:.25s;
+        
+        }
+        
+        
+        .attributeCard h3{
+        
+            font-size:24px;
+        
+            margin-bottom:8px;
+        
+        }
+        
+        
+        .attributeCard h4{
+        
+            font-size:32px;
+        
+            margin:0;
+        
+        }
+        
+        
+        .attributeCard:hover{
+        
+            background:#C8102E;
+        
+            transform:translateY(-3px);
+        
+        }
+        
+        
+        .attributeCard h3,
+        .attributeCard h4{
+        
+            width:100%;
+        
+            text-align:center;
+        
+            margin:5px 0;
+        
+        }

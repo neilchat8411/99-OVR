@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>99 Overall</title>
+
+<link rel="stylesheet" href="style.css">
+
+</head>
+
+
+<body>
+
+<header>
+
+<h1>🏀 99 OVERALL</h1>
+
+<p>Create the greatest NBA team using other teams' strengths.</p>
+
+<div id="progress">
+
+<div id="progressFill"></div>
+
+</div>
+
+</header>
+
+
+
+<main>
+
+
+<section class="panel current">
+
+
+<h2>Current Team</h2>
+
+
+<img id="teamLogo"
+src=""
+alt="">
+
+
+<h1 id="teamName">
+Press Spin
+</h1>
+
+
+<select id="gameMode">
+
+<option value="casual">
+Casual Mode
+</option>
+
+<option value="blind">
+Blind Mode
+</option>
+
+</select>
+
+
+
+<button id="spinButton">
+SPIN TEAM
+</button>
+
+
+<button id="rerollButton">
+REROLL (3)
+</button>
+
+
+</section>
+
+
+
+
+
+<section class="panel">
+
+
+<h2>Select Attribute</h2>
+
+
+<div id="attributeContainer">
+
+<p>
+Spin a team to begin.
+</p>
+
+
+</div>
+
+
+</section>
+
+
+
+
+
+<section class="panel">
+
+
+<h2>Your Team</h2>
+
+
+<div id="teamBuilder">
+
+
+</div>
+
+
+<h1 id="overall">
+
+OVR --
+
+</h1>
+
+
+</section>
+
+
+</main>
+
+
+
+
+
+<div id="resultScreen">
+
+
+<div class="resultCard">
+
+
+<h1>
+🏆 FINAL TEAM
+</h1>
+
+
+<h2 id="finalRating">
+
+</h2>
+
+
+<h3 id="finalRecord">
+
+</h3>
+
+
+<h3 id="championshipOdds">
+
+</h3>
+
+
+<p id="teamStyle">
+
+</p>
+
+
+
+<button onclick="location.reload()">
+
+PLAY AGAIN
+
+</button>
+
+
+</div>
+
+
+</div>
+
+
+
+
+
+<script src="teams.js"></script>
+
+<script src="script.js"></script>
+
+
+</body>
+
+</html>
