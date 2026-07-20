@@ -5,15 +5,15 @@ const teams = [
     logo:"https://cdn.nba.com/logos/nba/1610612737/primary/L/logo.svg",
     ratings:{
     TIER:"Play-In",
-    OVR:84,
-    INS:85,
-    OUT:86,
-    ATH:89,
-    PLA:86,
-    DEF:78,
-    REB:82,
-    INT:83,
-    BEST:88
+    OVR:82,
+    INS:75,
+    OUT:85,
+    ATH:78,
+    PLA:77,
+    DEF:61,
+    REB:56,
+    INT:69,
+    BEST:89
     }
     },
     
@@ -22,15 +22,15 @@ const teams = [
     logo:"https://cdn.nba.com/logos/nba/1610612738/primary/L/logo.svg",
     ratings:{
     TIER:"Championship",
-    OVR:95,
-    INS:91,
-    OUT:96,
-    ATH:89,
-    PLA:90,
-    DEF:94,
-    REB:88,
-    INT:92,
-    BEST:97
+    OVR:83,
+    INS:71,
+    OUT:85,
+    ATH:83,
+    PLA:80,
+    DEF:76,
+    REB:63,
+    INT:81,
+    BEST:93
     }
     },
     
@@ -40,14 +40,14 @@ const teams = [
     ratings:{
     TIER:"Rebuild",
     OVR:80,
-    INS:80,
+    INS:75,
     OUT:82,
-    ATH:82,
-    PLA:83,
-    DEF:79,
-    REB:80,
-    INT:78,
-    BEST:82
+    ATH:80,
+    PLA:66,
+    DEF:60,
+    REB:60,
+    INT:82,
+    BEST:86
     }
     },
     
@@ -56,15 +56,15 @@ const teams = [
     logo:"https://cdn.nba.com/logos/nba/1610612766/primary/L/logo.svg",
     ratings:{
     TIER:"Rebuild",
-    OVR:79,
-    INS:78,
-    OUT:83,
-    ATH:87,
-    PLA:84,
-    DEF:76,
-    REB:77,
-    INT:79,
-    BEST:85
+    OVR:82,
+    INS:61,
+    OUT:86,
+    ATH:75,
+    PLA:68,
+    DEF:60,
+    REB:59,
+    INT:74,
+    BEST:87
     }
     },
     
@@ -73,15 +73,15 @@ const teams = [
     logo:"https://cdn.nba.com/logos/nba/1610612741/primary/L/logo.svg",
     ratings:{
     TIER:"Play-In",
-    OVR:82,
-    INS:83,
+    OVR:81,
+    INS:62,
     OUT:81,
-    ATH:80,
-    PLA:80,
-    DEF:82,
-    REB:84,
-    INT:82,
-    BEST:86
+    ATH:78,
+    PLA:75,
+    DEF:59,
+    REB:59,
+    INT:81,
+    BEST:85
     }
     },
     
@@ -90,15 +90,15 @@ const teams = [
     logo:"https://cdn.nba.com/logos/nba/1610612739/primary/L/logo.svg",
     ratings:{
     TIER:"Contender",
-    OVR:91,
-    INS:91,
-    OUT:84,
-    ATH:85,
-    PLA:86,
-    DEF:91,
-    REB:92,
-    INT:90,
-    BEST:92
+    OVR:82,
+    INS:75,
+    OUT:81,
+    ATH:82,
+    PLA:63,
+    DEF:74,
+    REB:60,
+    INT:66,
+    BEST:93
     }
     },
     
@@ -106,16 +106,16 @@ const teams = [
     name:"Dallas Mavericks",
     logo:"https://cdn.nba.com/logos/nba/1610612742/primary/L/logo.svg",
     ratings:{
-    TIER:"Contender",
-    OVR:92,
-    INS:88,
-    OUT:91,
-    ATH:84,
-    PLA:96,
-    DEF:82,
-    REB:81,
-    INT:90,
-    BEST:97
+    TIER:"Play-In",
+    OVR:82,
+    INS:67,
+    OUT:86,
+    ATH:77,
+    PLA:74,
+    DEF:64,
+    REB:60,
+    INT:73,
+    BEST:90
     }
     },
     
@@ -124,8 +124,8 @@ const teams = [
     logo:"https://cdn.nba.com/logos/nba/1610612743/primary/L/logo.svg",
     ratings:{
     TIER:"Championship",
-    OVR:94,
-    INS:93,
+    OVR:84,
+    INS:77,
     OUT:87,
     ATH:82,
     PLA:97,
