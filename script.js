@@ -10,6 +10,12 @@ const attributeList = [
     "BEST"
 ];
 
+const TEAM_OVRS = teams.map(team => team.ratings.OVR);
+
+const TEAM_MIN = Math.min(...TEAM_OVRS);
+const TEAM_MAX = Math.max(...TEAM_OVRS);
+
+let waitingForPick = false;
 
 let currentTeam = null;
 
@@ -56,63 +62,45 @@ rerollButton.onclick = rerollTeam;
 
 function spinTeam(){
 
-if(gameOver)
-return;
+    if(gameOver) return;
 
+    if(waitingForPick) return;
 
-let availableTeams =
-teams.filter(
-team=>!usedTeams.includes(team.name)
-);
+    let availableTeams =
+        teams.filter(team => !usedTeams.includes(team.name));
 
+    if(availableTeams.length===0) return;
 
-if(availableTeams.length===0)
-return;
+    spinButton.disabled = true;
 
+    let spins = 0;
 
+    let animation = setInterval(()=>{
 
-spinButton.disabled=true;
+        currentTeam =
+            availableTeams[
+                Math.floor(Math.random()*availableTeams.length)
+            ];
 
+        teamName.innerHTML = currentTeam.name;
+        teamLogo.src = currentTeam.logo;
 
-let spins=0;
+        spins++;
 
+        if(spins>=20){
 
-let animation=setInterval(()=>{
+            clearInterval(animation);
 
+            displayAttributes();
 
-currentTeam =
-availableTeams[
-Math.floor(Math.random()*availableTeams.length)
-];
+            waitingForPick = true;
 
+            // Keep spin disabled until player picks
+            spinButton.disabled = true;
 
-teamName.innerHTML =
-currentTeam.name;
+        }
 
-
-teamLogo.src =
-currentTeam.logo;
-
-
-spins++;
-
-
-if(spins>=20){
-
-
-clearInterval(animation);
-
-displayAttributes();
-
-spinButton.disabled=false;
-
-
-}
-
-
-},80);
-
-
+    },80);
 
 }
 
@@ -220,7 +208,9 @@ usedTeams.push(currentTeam.name);
 
 updateTeam();
 
+waitingForPick = false;
 
+spinButton.disabled = false;
 
 attributeContainer.innerHTML=
 "<p>Spin for another team.</p>";
@@ -365,34 +355,32 @@ Math.round(total/weightTotal);
 
 function rerollTeam(){
 
+    if(gameOver) return;
 
-if(rerolls<=0 || gameOver){
+    if(!waitingForPick) return;
 
-rerollButton.disabled=true;
+    if(rerolls<=0){
 
-return;
+        rerollButton.disabled = true;
 
-}
+        return;
 
+    }
 
-rerolls--;
+    rerolls--;
 
+    rerollButton.innerHTML =
+    "REROLL ("+rerolls+")";
 
-rerollButton.innerHTML=
-"REROLL ("+rerolls+")";
+    waitingForPick = false;
 
+    spinTeam();
 
-spinTeam();
+    if(rerolls===0){
 
+        rerollButton.disabled = true;
 
-
-if(rerolls===0){
-
-rerollButton.disabled=true;
-
-}
-
-
+    }
 
 }
 
@@ -460,64 +448,57 @@ importance[attribute];
 
 
 
-let finalOVR =
+
+
+let rawOVR = weightedTotal / weights;
+
+// Normalize into the same scale as your dataset
+let normalizedOVR = Math.max(
+    TEAM_MIN,
+    Math.min(TEAM_MAX, rawOVR)
+);
+
+let finalOVR = Math.round(normalizedOVR);
+
+
+
+
+
+const percent =
+(finalOVR - TEAM_MIN) /
+(TEAM_MAX - TEAM_MIN);
+
+let wins =
 Math.round(
-weightedTotal/weights
+20 + percent * 45
 );
 
+// 20–65 wins
 
+wins +=
+Math.floor(Math.random()*5)-2;
 
-let wins;
-
-
-
-if(finalOVR>=95){
-
-wins=72+Math.floor(Math.random()*8);
-
-}
-
-else if(finalOVR>=90){
-
-wins=60+Math.floor(Math.random()*10);
-
-}
-
-else if(finalOVR>=85){
-
-wins=48+Math.floor(Math.random()*12);
-
-}
-
-else if(finalOVR>=80){
-
-wins=35+Math.floor(Math.random()*10);
-
-}
-
-else{
-
-wins=20+Math.floor(Math.random()*15);
-
-}
+wins =
+Math.max(15,
+Math.min(68,wins));
 
 
 
-let championship =
-Math.round(
-(finalOVR-70)*3
-);
+let championship = Math.round(
+    percent * 85
+    );
+    
+    championship =
+    Math.max(
+    1,
+    Math.min(
+    90,
+    championship
+    ));
 
 
 
-championship=
-Math.max(
-1,
-Math.min(
-95,
-championship
-)
-);
+
 
 
 
@@ -525,27 +506,29 @@ let tier;
 
 
 
-if(finalOVR>=93){
+if(finalOVR>=TEAM_MAX){
 
-tier="🔥 DYNASTY";
-
-}
-
-else if(finalOVR>=88){
-
-tier="🏆 TITLE CONTENDER";
+    tier="🏆 CHAMPIONSHIP FAVORITE";
 
 }
+else if(finalOVR>=TEAM_MAX-1){
 
-else if(finalOVR>=83){
-
-tier="⭐ PLAYOFF TEAM";
+    tier="⭐ CONTENDER";
 
 }
+else if(finalOVR>=TEAM_MAX-3){
 
+    tier="🏀 PLAYOFF TEAM";
+
+}
+else if(finalOVR>=TEAM_MAX-5){
+
+    tier="🎯 PLAY-IN";
+
+}
 else{
 
-tier="🔨 REBUILD";
+    tier="🔨 REBUILD";
 
 }
 
