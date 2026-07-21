@@ -1,3 +1,10 @@
+// ================================
+// BUILD A TEAM v2.0
+// ================================
+
+
+// ---------- ATTRIBUTES ----------
+
 const attributeList = [
     "OVR",
     "INS",
@@ -10,12 +17,45 @@ const attributeList = [
     "BEST"
 ];
 
-const TEAM_OVRS = teams.map(team => team.ratings.OVR);
 
-const TEAM_MIN = Math.min(...TEAM_OVRS);
-const TEAM_MAX = Math.max(...TEAM_OVRS);
+// ---------- AUTOMATIC NORMALIZATION ----------
 
-let waitingForPick = false;
+// Creates min/max values from your teams.js data
+const ATTRIBUTE_RANGES = {};
+
+attributeList.forEach(attribute => {
+
+    const values = teams.map(
+        team => team.ratings[attribute]
+    );
+
+    ATTRIBUTE_RANGES[attribute] = {
+
+        min: Math.min(...values),
+
+        max: Math.max(...values)
+
+    };
+
+});
+
+
+const TEAM_OVRS =
+teams.map(
+    team => team.ratings.OVR
+);
+
+
+const TEAM_MIN =
+Math.min(...TEAM_OVRS);
+
+
+const TEAM_MAX =
+Math.max(...TEAM_OVRS);
+
+
+
+// ---------- GAME STATE ----------
 
 let currentTeam = null;
 
@@ -25,34 +65,50 @@ let selectedAttributes = {};
 
 let rerolls = 3;
 
+let waitingForPick = false;
+
 let gameOver = false;
 
+let spinning = false;
+
+
+
+// ---------- DOM ELEMENTS ----------
 
 const spinButton =
 document.getElementById("spinButton");
 
+
 const rerollButton =
 document.getElementById("rerollButton");
+
 
 const teamName =
 document.getElementById("teamName");
 
+
 const teamLogo =
 document.getElementById("teamLogo");
+
 
 const attributeContainer =
 document.getElementById("attributeContainer");
 
+
 const teamBuilder =
 document.getElementById("teamBuilder");
 
+
 const overall =
 document.getElementById("overall");
+
 
 const progressFill =
 document.getElementById("progressFill");
 
 
+
+// ---------- BUTTON EVENTS ----------
 
 spinButton.onclick = spinTeam;
 
@@ -60,306 +116,490 @@ rerollButton.onclick = rerollTeam;
 
 
 
+// ================================
+// SPIN TEAM
+// ================================
+
 function spinTeam(){
 
-    if(gameOver) return;
 
-    if(waitingForPick) return;
+    if(gameOver)
+        return;
+
+
+    if(waitingForPick)
+        return;
+
+
+    if(spinning)
+        return;
+
+
 
     let availableTeams =
-        teams.filter(team => !usedTeams.includes(team.name));
+    teams.filter(
+        team =>
+        !usedTeams.includes(team.name)
+    );
 
-    if(availableTeams.length===0) return;
+
+    if(availableTeams.length === 0)
+        return;
+
+
+
+    spinning = true;
 
     spinButton.disabled = true;
 
+
+
     let spins = 0;
 
-    let animation = setInterval(()=>{
+
+
+    let animation =
+    setInterval(()=>{
+
 
         currentTeam =
-            availableTeams[
-                Math.floor(Math.random()*availableTeams.length)
-            ];
+        availableTeams[
+            Math.floor(
+                Math.random() *
+                availableTeams.length
+            )
+        ];
 
-        teamName.innerHTML = currentTeam.name;
-        teamLogo.src = currentTeam.logo;
+
+
+        teamName.innerHTML =
+        currentTeam.name;
+
+
+        teamLogo.src =
+        currentTeam.logo;
+
+
 
         spins++;
 
-        if(spins>=20){
+
+
+        if(spins >= 20){
+
 
             clearInterval(animation);
 
-            displayAttributes();
+
+            spinning = false;
+
 
             waitingForPick = true;
 
-            // Keep spin disabled until player picks
+
+            displayAttributes();
+
+
+
+            // Cannot spin again until choosing
             spinButton.disabled = true;
+
+
 
         }
 
+
+
     },80);
+
+
 
 }
 
 
+
+
+// ================================
+// DISPLAY ATTRIBUTE OPTIONS
+// ================================
 
 function displayAttributes(){
 
 
-attributeContainer.innerHTML="";
-
-
-attributeList.forEach(attribute=>{
-
-
-let card =
-document.createElement("div");
-
-
-card.className="attributeCard";
+    attributeContainer.innerHTML = "";
 
 
 
-let value =
-currentTeam.ratings[attribute];
+    attributeList.forEach(attribute => {
 
 
 
-let mode =
-document.getElementById("gameMode").value;
+        let card =
+        document.createElement("div");
 
 
 
-if(mode==="blind"){
+        card.className =
+        "attributeCard";
 
-value="???";
+
+
+        let rating =
+        currentTeam.ratings[attribute];
+
+
+
+        let modeElement =
+        document.getElementById("gameMode");
+
+
+
+        let mode =
+        modeElement ?
+        modeElement.value :
+        "casual";
+
+
+
+        if(mode === "blind"){
+
+            rating = "???";
+
+        }
+
+
+
+        card.innerHTML = `
+
+            <h3>${attribute}</h3>
+
+            <h4>${rating}</h4>
+
+        `;
+
+
+
+        if(selectedAttributes[attribute]){
+
+
+            card.classList.add("locked");
+
+
+        }
+        else{
+
+
+            card.onclick =
+            () =>
+            chooseAttribute(attribute);
+
+
+        }
+
+
+
+        attributeContainer.appendChild(card);
+
+
+
+    });
+
 
 }
 
 
 
-card.innerHTML=`
-
-<h3>${attribute}</h3>
-
-<h4>${value}</h4>
-
-`;
-
-
-
-if(selectedAttributes[attribute]){
-
-card.classList.add("locked");
-
-}
-
-
-else{
-
-card.onclick =
-()=>chooseAttribute(attribute);
-
-}
-
-
-
-attributeContainer.appendChild(card);
-
-
-
-});
-
-
-
-}
-
-
+// ================================
+// CHOOSE ATTRIBUTE
+// ================================
 
 function chooseAttribute(attribute){
 
 
-if(selectedAttributes[attribute])
-return;
+    if(!waitingForPick)
+        return;
+
+
+    if(selectedAttributes[attribute])
+        return;
 
 
 
-selectedAttributes[attribute]={
-
-team:
-currentTeam.name,
-
-logo:
-currentTeam.logo,
-
-rating:
-currentTeam.ratings[attribute]
-
-};
+    selectedAttributes[attribute] = {
 
 
+        team:
+        currentTeam.name,
 
-usedTeams.push(currentTeam.name);
+
+        logo:
+        currentTeam.logo,
 
 
+        rating:
+        currentTeam.ratings[attribute]
 
-updateTeam();
 
-waitingForPick = false;
-
-spinButton.disabled = false;
-
-attributeContainer.innerHTML=
-"<p>Spin for another team.</p>";
+    };
 
 
 
-teamName.innerHTML=
-"Press Spin";
-
-
-teamLogo.src="";
+    usedTeams.push(
+        currentTeam.name
+    );
 
 
 
-if(
-Object.keys(selectedAttributes).length
-===
-attributeList.length
-){
+    waitingForPick = false;
 
-finishGame();
+
+    spinButton.disabled = false;
+
+
+
+    updateTeam();
+
+
+
+    attributeContainer.innerHTML =
+    "<p>Spin for another team.</p>";
+
+
+
+    teamName.innerHTML =
+    "Press Spin";
+
+
+    teamLogo.src = "";
+
+
+
+    if(
+        Object.keys(selectedAttributes).length
+        ===
+        attributeList.length
+    ){
+
+        finishGame();
+
+    }
+
+
 
 }
 
 
 
-}
-
-
+// ================================
+// UPDATE TEAM BUILDER
+// ================================
 
 function updateTeam(){
 
 
-teamBuilder.innerHTML="";
-
-
-let total=0;
-
-let weightTotal=0;
+    teamBuilder.innerHTML = "";
 
 
 
-attributeList.forEach(attribute=>{
+    let normalizedTotal = 0;
 
-
-let slot =
-document.createElement("div");
-
-
-slot.className="teamSlot";
+    let weightTotal = 0;
 
 
 
-if(selectedAttributes[attribute]){
+    const weights = {
 
 
-let data =
-selectedAttributes[attribute];
+        OVR:2,
+
+        INS:1,
+
+        OUT:1,
+
+        ATH:1,
+
+        PLA:1.1,
+
+        DEF:1.3,
+
+        REB:1,
+
+        INT:1,
+
+        BEST:1.2
 
 
-slot.innerHTML=`
-
-<img src="${data.logo}">
-
-<div>
-
-<b>${attribute}</b>
-
-<br>
-
-${data.team}
-
-</div>
-
-<strong>
-${data.rating}
-</strong>
-
-`;
+    };
 
 
 
-total += data.rating;
+    attributeList.forEach(attribute => {
 
-weightTotal++;
+
+
+        let slot =
+        document.createElement("div");
+
+
+
+        slot.className =
+        "teamSlot";
+
+
+
+        if(selectedAttributes[attribute]){
+
+
+            let data =
+            selectedAttributes[attribute];
+
+
+
+            slot.innerHTML = `
+
+            <img src="${data.logo}">
+
+            <div>
+
+            <b>${attribute}</b>
+
+            <br>
+
+            ${data.team}
+
+            </div>
+
+
+            <strong>
+
+            ${data.rating}
+
+            </strong>
+
+
+            `;
+
+
+
+            const range =
+            ATTRIBUTE_RANGES[attribute];
+
+
+
+            const normalized =
+
+            (
+                data.rating -
+                range.min
+            )
+            /
+            (
+                range.max -
+                range.min
+            );
+
+
+
+            normalizedTotal +=
+            normalized *
+            weights[attribute];
+
+
+            weightTotal +=
+            weights[attribute];
+
+
+
+        }
+        else{
+
+
+            slot.innerHTML = `
+
+            <b>${attribute}</b>
+
+            <span>---</span>
+
+            `;
+
+
+        }
+
+
+
+        teamBuilder.appendChild(slot);
+
+
+
+    });
+
+
+
+    let progress =
+
+    Object.keys(selectedAttributes).length
+    /
+    attributeList.length
+    *
+    100;
+
+
+
+    progressFill.style.width =
+    progress + "%";
+
+
+
+    if(weightTotal > 0){
+
+
+        let currentOVR =
+
+        Math.round(
+
+            TEAM_MIN +
+
+            (
+                normalizedTotal /
+                weightTotal
+            )
+            *
+            (
+                TEAM_MAX -
+                TEAM_MIN
+            )
+
+        );
+
+
+
+        overall.innerHTML =
+        "OVR " + currentOVR;
+
+
+
+    }
+
+
 
 }
 
-
-
-else{
-
-
-slot.innerHTML=`
-
-<b>${attribute}</b>
-
-<span>
----
-</span>
-
-`;
-
-}
-
-
-teamBuilder.appendChild(slot);
-
-
-
-});
-
-
-
-let progress =
-Object.keys(selectedAttributes).length
-/
-attributeList.length
-*
-100;
-
-
-progressFill.style.width =
-progress+"%";
-
-
-
-if(weightTotal>0){
-
-overall.innerHTML =
-"OVR "+
-Math.round(total/weightTotal);
-
-}
-
-
-}
-
-
-
-
+// ================================
+// REROLL TEAM
+// ================================
 
 function rerollTeam(){
 
-    if(gameOver) return;
 
-    if(!waitingForPick) return;
+    if(gameOver)
+        return;
 
-    if(rerolls<=0){
+
+    if(!waitingForPick)
+        return;
+
+
+    if(rerolls <= 0){
 
         rerollButton.disabled = true;
 
@@ -367,237 +607,415 @@ function rerollTeam(){
 
     }
 
+
+
     rerolls--;
 
+
+
     rerollButton.innerHTML =
-    "REROLL ("+rerolls+")";
+    "REROLL (" + rerolls + ")";
+
+
 
     waitingForPick = false;
 
+
+
     spinTeam();
 
-    if(rerolls===0){
+
+
+    if(rerolls === 0){
 
         rerollButton.disabled = true;
 
     }
 
+
+
 }
 
 
 
 
+
+// ================================
+// FINISH GAME
+// ================================
 
 function finishGame(){
 
 
-gameOver=true;
+    gameOver = true;
 
 
-spinButton.disabled=true;
+    spinButton.disabled = true;
 
-rerollButton.disabled=true;
-
-
-
-let weightedTotal=0;
-
-let weights=0;
+    rerollButton.disabled = true;
 
 
 
-const importance={
-
-OVR:2,
-
-INS:1,
-
-OUT:1,
-
-ATH:1,
-
-PLA:1.1,
-
-DEF:1.3,
-
-REB:1,
-
-INT:1,
-
-BEST:1.2
-
-};
+    const weights = {
 
 
+        OVR:2,
 
-attributeList.forEach(attribute=>{
+        INS:1,
+
+        OUT:1,
+
+        ATH:1,
+
+        PLA:1.1,
+
+        DEF:1.3,
+
+        REB:1,
+
+        INT:1,
+
+        BEST:1.2
 
 
-weightedTotal +=
-
-selectedAttributes[attribute].rating
-*
-importance[attribute];
-
-
-weights +=
-importance[attribute];
-
-
-});
+    };
 
 
 
+    let normalizedTotal = 0;
 
-
-let rawOVR = weightedTotal / weights;
-
-// Normalize into the same scale as your dataset
-let normalizedOVR = Math.max(
-    TEAM_MIN,
-    Math.min(TEAM_MAX, rawOVR)
-);
-
-let finalOVR = Math.round(normalizedOVR);
+    let weightTotal = 0;
 
 
 
+    attributeList.forEach(attribute => {
 
 
-const percent =
-(finalOVR - TEAM_MIN) /
-(TEAM_MAX - TEAM_MIN);
-
-let wins =
-Math.round(
-20 + percent * 45
-);
-
-// 20–65 wins
-
-wins +=
-Math.floor(Math.random()*5)-2;
-
-wins =
-Math.max(15,
-Math.min(68,wins));
+        let rating =
+        selectedAttributes[attribute].rating;
 
 
 
-let championship = Math.round(
-    percent * 85
+        let range =
+        ATTRIBUTE_RANGES[attribute];
+
+
+
+        let normalized =
+
+        (
+            rating -
+            range.min
+        )
+        /
+        (
+            range.max -
+            range.min
+        );
+
+
+
+        normalizedTotal +=
+
+        normalized *
+        weights[attribute];
+
+
+
+        weightTotal +=
+        weights[attribute];
+
+
+    });
+
+
+
+    let finalOVR =
+
+    Math.round(
+
+        TEAM_MIN +
+
+        (
+            normalizedTotal /
+            weightTotal
+        )
+        *
+        (
+            TEAM_MAX -
+            TEAM_MIN
+        )
+
     );
-    
-    championship =
-    Math.max(
-    1,
-    Math.min(
-    90,
-    championship
-    ));
+
+
+
+    // ---------- RECORD ----------
+
+
+    let percent =
+
+    (
+        finalOVR -
+        TEAM_MIN
+    )
+    /
+    (
+        TEAM_MAX -
+        TEAM_MIN
+    );
+
+
+
+    let wins =
+
+    Math.round(
+
+        20 +
+        percent * 45
+
+    );
+
+
+
+    wins +=
+    Math.floor(Math.random()*5)-2;
+
+
+
+    wins = Math.max(
+        15,
+        Math.min(
+            68,
+            wins
+        )
+    );
+
+
+
+    // ---------- CHAMPIONSHIP ODDS ----------
+
+
+    let championship =
+
+    Math.round(
+        percent * 85
+    );
+
+
+
+    championship = Math.max(
+
+        1,
+
+        Math.min(
+
+            90,
+
+            championship
+
+        )
+
+    );
+
+
+
+
+
+    // ---------- TEAM TIER ----------
+
+
+    let tier;
+
+
+
+    if(finalOVR >= TEAM_MAX - 1){
+
+        tier =
+        "🏆 CHAMPIONSHIP FAVORITE";
+
+    }
+
+    else if(finalOVR >= TEAM_MAX - 3){
+
+        tier =
+        "⭐ CONTENDER";
+
+    }
+
+    else if(finalOVR >= TEAM_MAX - 5){
+
+        tier =
+        "🏀 PLAYOFF TEAM";
+
+    }
+
+    else if(finalOVR >= TEAM_MIN + 2){
+
+        tier =
+        "🎯 PLAY-IN";
+
+    }
+
+    else{
+
+        tier =
+        "🔨 REBUILD";
+
+    }
+
+
+
+
+    // ---------- STRENGTHS ----------
+
+
+    let strengths = [];
+
+
+
+    attributeList.forEach(attribute => {
+
+
+        let range =
+        ATTRIBUTE_RANGES[attribute];
+
+
+        let rating =
+        selectedAttributes[attribute].rating;
+
+
+
+        let normalized =
+
+        (
+            rating -
+            range.min
+        )
+        /
+        (
+            range.max -
+            range.min
+        );
+
+
+
+        if(normalized >= .75){
+
+            strengths.push(attribute);
+
+        }
+
+
+
+    });
 
 
 
 
 
 
-
-let tier;
-
+    // ---------- DISPLAY RESULTS ----------
 
 
-if(finalOVR>=TEAM_MAX){
-
-    tier="🏆 CHAMPIONSHIP FAVORITE";
-
-}
-else if(finalOVR>=TEAM_MAX-1){
-
-    tier="⭐ CONTENDER";
-
-}
-else if(finalOVR>=TEAM_MAX-3){
-
-    tier="🏀 PLAYOFF TEAM";
-
-}
-else if(finalOVR>=TEAM_MAX-5){
-
-    tier="🎯 PLAY-IN";
-
-}
-else{
-
-    tier="🔨 REBUILD";
-
-}
+    let resultScreen =
+    document.getElementById("resultScreen");
 
 
 
-let strengths=[];
+    if(resultScreen){
+
+        resultScreen.style.display =
+        "flex";
+
+    }
 
 
 
-attributeList.forEach(attribute=>{
-
-
-if(
-selectedAttributes[attribute].rating>=90
-){
-
-strengths.push(attribute);
-
-}
-
-
-});
+    let finalRating =
+    document.getElementById("finalRating");
 
 
 
-document.getElementById("resultScreen")
-.style.display="flex";
+    if(finalRating){
+
+        finalRating.innerHTML =
+
+        `
+        ${finalOVR} OVR
+        <br>
+        ${tier}
+        `;
+
+    }
 
 
 
-document.getElementById("finalRating")
-.innerHTML=
 
-`${finalOVR} OVR
-<br>
-${tier}`;
+
+    let finalRecord =
+    document.getElementById("finalRecord");
 
 
 
-document.getElementById("finalRecord")
-.innerHTML=
+    if(finalRecord){
 
-`
-Projected Record:
-<br>
-${wins}-${82-wins}
-`;
+        finalRecord.innerHTML =
 
+        `
+        Projected Record:
+        <br>
+        ${wins}-${82-wins}
+        `;
 
-
-document.getElementById("championshipOdds")
-.innerHTML=
-
-`
-Championship Odds:
-<br>
-${championship}%
-`;
+    }
 
 
 
-document.getElementById("teamStyle")
-.innerHTML=
 
-`
-Team Strengths:
-<br>
-${strengths.join(", ")}
-`;
+    let championshipOdds =
+    document.getElementById("championshipOdds");
+
+
+
+    if(championshipOdds){
+
+        championshipOdds.innerHTML =
+
+        `
+        Championship Odds:
+        <br>
+        ${championship}%
+        `;
+
+    }
+
+
+
+
+
+    let teamStyle =
+    document.getElementById("teamStyle");
+
+
+
+    if(teamStyle){
+
+        teamStyle.innerHTML =
+
+        `
+        Team Strengths:
+        <br>
+        ${
+            strengths.length > 0
+            ?
+            strengths.join(", ")
+            :
+            "Balanced"
+        }
+        `;
+
+    }
 
 
 
