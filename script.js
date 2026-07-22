@@ -675,8 +675,8 @@ function showCoach(){
         <br><br>
 
         <button onclick="chooseConference()">
-
-         
+            Simulate Season
+        </button>
 
     </div>
 
