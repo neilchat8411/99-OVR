@@ -2,6 +2,7 @@
 // BUILD A TEAM v2.0
 // ================================
 
+let selectedCoach = null;
 
 // ---------- ATTRIBUTES ----------
 
@@ -380,7 +381,7 @@ function chooseAttribute(attribute){
         attributeList.length
     ){
 
-        finishGame();
+        startCoachDraft();
 
     }
 
@@ -636,9 +637,102 @@ function rerollTeam(){
 
 }
 
+function showCoach(){
 
+    attributeContainer.innerHTML = `
 
+    <div class="attributeCard">
 
+        <h2>${selectedCoach.name}</h2>
+
+        <p>${selectedCoach.team}</p>
+
+        <br>
+
+        Overall: ${selectedCoach.overall}
+
+        <br>
+
+        Offense: ${selectedCoach.offense}
+
+        <br>
+
+        Defense: ${selectedCoach.defense}
+
+        <br>
+
+        Development: ${selectedCoach.development}
+
+        <br>
+
+        Clutch: ${selectedCoach.clutch}
+
+        <br><br>
+
+        <button onclick="finishGame()">
+
+            Continue
+
+        </button>
+
+    </div>
+
+    `;
+
+}
+
+function spinCoach(){
+
+    spinButton.disabled = true;
+
+    let spins = 0;
+
+    let currentCoach = null;
+
+    let animation = setInterval(()=>{
+
+        currentCoach =
+
+        coaches[
+            Math.floor(
+                Math.random()*coaches.length
+            )
+        ];
+
+        teamName.innerHTML =
+        currentCoach.name;
+
+        spins++;
+
+        if(spins>=18){
+
+            clearInterval(animation);
+
+            selectedCoach = currentCoach;
+
+            showCoach();
+
+        }
+
+    },80);
+
+}
+
+function startCoachDraft(){
+
+    attributeContainer.innerHTML = "";
+
+    teamName.innerHTML = "Spin For Coach";
+
+    teamLogo.src = "";
+
+    spinButton.disabled = false;
+
+    rerollButton.disabled = true;
+
+    spinButton.onclick = spinCoach;
+
+}
 
 // ================================
 // FINISH GAME
