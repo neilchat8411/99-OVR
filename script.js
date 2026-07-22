@@ -8,6 +8,7 @@ let seasonWins = 0;
 let seasonLosses = 0;
 let playoffSeed = 0;
 
+let leagueStandings = [];
 // ---------- ATTRIBUTES ----------
 
 const attributeList = [
@@ -673,9 +674,9 @@ function showCoach(){
 
         <br><br>
 
-        <button onclick="startSeasonSimulation()">
-            Simulate Season
-        </button>
+        <button onclick="chooseConference()">
+
+         
 
     </div>
 
@@ -748,37 +749,61 @@ function simulateSeason(){
 
 function determineSeed(){
 
-    const conference=[];
+    leagueStandings=[];
 
-    conference.push({
+    teams.forEach(team=>{
 
-        team:"Your Team",
+        let strength=
 
-        wins:seasonWins
+        (team.ratings.OVR-76)/10;
 
-    });
+        let wins=0;
 
-    for(let i=0;i<14;i++){
+        for(let i=0;i<82;i++){
 
-        conference.push({
+            let opponent=
 
-            team:"CPU",
+            0.3+
 
-            wins:
+            Math.random()*0.7;
 
-            28+
+            let chance=
 
-            Math.floor(
+            strength/
 
-                Math.random()*33
+            (strength+opponent);
 
-            )
+            if(Math.random()<chance){
+
+                wins++;
+
+            }
+
+        }
+
+        leagueStandings.push({
+
+            name:team.name,
+
+            wins:wins,
+
+            custom:false
 
         });
 
-    }
+    });
 
-    conference.sort(
+    leagueStandings.push({
+
+        name:"Your Team",
+
+        wins:seasonWins,
+
+        custom:true
+
+    });
+
+    leagueStandings.sort(
 
         (a,b)=>b.wins-a.wins
 
@@ -786,13 +811,65 @@ function determineSeed(){
 
     playoffSeed=
 
-    conference.findIndex(
+    leagueStandings.findIndex(
 
-        t=>t.team==="Your Team"
+        t=>t.custom
 
     )+1;
 
-    showSeasonResults();
+    showStandings();
+
+}
+
+function showStandings(){
+
+    let html="<h2>Final Standings</h2>";
+
+    html+="<table>";
+
+    html+="<tr><th>#</th><th>Team</th><th>Record</th></tr>";
+
+    leagueStandings.forEach((team,index)=>{
+
+        html+=`
+
+        <tr>
+
+        <td>${index+1}</td>
+
+        <td>
+
+        ${team.name}
+
+        </td>
+
+        <td>
+
+        ${team.wins}-${82-team.wins}
+
+        </td>
+
+        </tr>
+
+        `;
+
+    });
+
+    html+="</table>";
+
+    html+=`
+
+    <br>
+
+    <button onclick="simulatePlayoffs()">
+
+    Begin Playoffs
+
+    </button>
+
+    `;
+
+    attributeContainer.innerHTML=html;
 
 }
 
@@ -832,31 +909,7 @@ function showSeasonResults(){
 
 }
 
-function startSeasonSimulation(){
 
-    spinButton.style.display="none";
-
-    rerollButton.style.display="none";
-
-    attributeContainer.innerHTML=`
-
-        <h2>
-
-        Simulating Regular Season...
-
-        </h2>
-
-        <h3 id="seasonStatus">
-
-        Game 1 / 82
-
-        </h3>
-
-    `;
-
-    simulateSeason();
-
-}
 
 function calculateTeamStrength(){
 
