@@ -4,6 +4,10 @@
 
 let selectedCoach = null;
 
+let seasonWins = 0;
+let seasonLosses = 0;
+let playoffSeed = 0;
+
 // ---------- ATTRIBUTES ----------
 
 const attributeList = [
@@ -669,15 +673,236 @@ function showCoach(){
 
         <br><br>
 
-        <button onclick="finishGame()">
-
-            Continue
-
+        <button onclick="startSeasonSimulation()">
+            Simulate Season
         </button>
 
     </div>
 
     `;
+
+}
+
+function simulateSeason(){
+
+    seasonWins=0;
+    seasonLosses=0;
+
+    const teamStrength=
+    calculateTeamStrength();
+
+    let game=0;
+
+    let interval=setInterval(()=>{
+
+        game++;
+
+        const opponent=
+        0.35+
+        Math.random()*0.55;
+
+        const probability=
+
+        teamStrength/
+
+        (teamStrength+opponent);
+
+        if(Math.random()<probability){
+
+            seasonWins++;
+
+        }
+
+        else{
+
+            seasonLosses++;
+
+        }
+
+        document.getElementById("seasonStatus")
+        .innerHTML=
+
+        `
+
+        Game ${game} / 82
+
+        <br><br>
+
+        Record:
+
+        ${seasonWins}-${seasonLosses}
+
+        `;
+
+        if(game>=82){
+
+            clearInterval(interval);
+
+            determineSeed();
+
+        }
+
+    },35);
+
+}
+
+function determineSeed(){
+
+    const conference=[];
+
+    conference.push({
+
+        team:"Your Team",
+
+        wins:seasonWins
+
+    });
+
+    for(let i=0;i<14;i++){
+
+        conference.push({
+
+            team:"CPU",
+
+            wins:
+
+            28+
+
+            Math.floor(
+
+                Math.random()*33
+
+            )
+
+        });
+
+    }
+
+    conference.sort(
+
+        (a,b)=>b.wins-a.wins
+
+    );
+
+    playoffSeed=
+
+    conference.findIndex(
+
+        t=>t.team==="Your Team"
+
+    )+1;
+
+    showSeasonResults();
+
+}
+
+function showSeasonResults(){
+
+    attributeContainer.innerHTML=`
+
+    <h2>
+
+    Regular Season Complete
+
+    </h2>
+ s
+    <br>
+
+    <h1>
+
+    ${seasonWins}-${seasonLosses}
+
+    </h1>
+
+    <h2>
+
+    #${playoffSeed} Seed
+
+    </h2>
+
+    <br>
+
+    <button onclick="simulatePlayoffs()">
+
+    Start Playoffs
+
+    </button>
+
+    `;
+
+}
+
+function startSeasonSimulation(){
+
+    spinButton.style.display="none";
+
+    rerollButton.style.display="none";
+
+    attributeContainer.innerHTML=`
+
+        <h2>
+
+        Simulating Regular Season...
+
+        </h2>
+
+        <h3 id="seasonStatus">
+
+        Game 1 / 82
+
+        </h3>
+
+    `;
+
+    simulateSeason();
+
+}
+
+function calculateTeamStrength(){
+
+    const weights = {
+
+        OVR:2,
+        INS:1,
+        OUT:1,
+        ATH:1,
+        PLA:1.1,
+        DEF:1.3,
+        REB:1,
+        INT:1,
+        BEST:1.2
+
+    };
+
+    let score = 0;
+    let totalWeight = 0;
+
+    attributeList.forEach(attribute=>{
+
+        const rating =
+        selectedAttributes[attribute].rating;
+
+        const range =
+        ATTRIBUTE_RANGES[attribute];
+
+        const normalized =
+        (rating-range.min)/
+        (range.max-range.min);
+
+        score += normalized * weights[attribute];
+
+        totalWeight += weights[attribute];
+
+    });
+
+    score /= totalWeight;
+
+    // Coach bonus
+
+    score +=
+    (selectedCoach.overall-90)/200;
+
+    return score;
 
 }
 
