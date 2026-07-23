@@ -4,11 +4,7 @@
 
 let selectedCoach = null;
 
-let seasonWins = 0;
-let seasonLosses = 0;
-let playoffSeed = 0;
 
-let leagueStandings = [];
 // ---------- ATTRIBUTES ----------
 
 const attributeList = [
@@ -643,6 +639,7 @@ function rerollTeam(){
 }
 
 function showCoach(){
+    spinButton.style.display = "none";
 
     attributeContainer.innerHTML = `
 
@@ -961,13 +958,24 @@ function calculateTeamStrength(){
 
 function spinCoach(){
 
+    if(spinning)
+        return;
+
+
+    spinning = true;
+
+
     spinButton.disabled = true;
+
 
     let spins = 0;
 
+
     let currentCoach = null;
 
+
     let animation = setInterval(()=>{
+
 
         currentCoach =
 
@@ -977,38 +985,73 @@ function spinCoach(){
             )
         ];
 
+
+
         teamName.innerHTML =
         currentCoach.name;
 
+
+
         spins++;
 
-        if(spins>=18){
+
+
+        if(spins >= 20){
+
 
             clearInterval(animation);
 
+
+            spinning = false;
+
+
             selectedCoach = currentCoach;
+
 
             showCoach();
 
+
         }
 
+
     },80);
+
 
 }
 
 function startCoachDraft(){
 
-    attributeContainer.innerHTML = "";
+    attributeContainer.innerHTML = `
 
-    teamName.innerHTML = "Spin For Coach";
+    <h2>
+    Spin for your Head Coach
+    </h2>
+
+    `;
+
+
+    teamName.innerHTML =
+    "Press Spin";
+
 
     teamLogo.src = "";
 
+
+    waitingForPick = false;
+
+
+    spinning = false;
+
+
     spinButton.disabled = false;
+
 
     rerollButton.disabled = true;
 
+
+    // Change the button to coach mode
     spinButton.onclick = spinCoach;
+
 
 }
 
